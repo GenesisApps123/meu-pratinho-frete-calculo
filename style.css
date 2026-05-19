@@ -10,7 +10,7 @@ background:#c40000;
 display:flex;
 justify-content:center;
 align-items:center;
-height:100vh;
+min-height:100vh;
 padding:20px;
 }
 
@@ -32,9 +32,18 @@ margin-bottom:20px;
 h1{
 color:white;
 margin-bottom:20px;
-font-size:32px;
 }
 
+.cidade{
+background:white;
+color:#c40000;
+padding:14px;
+border-radius:12px;
+font-weight:bold;
+margin-bottom:20px;
+}
+
+select,
 input{
 width:100%;
 padding:16px;
@@ -56,6 +65,7 @@ font-size:18px;
 font-weight:bold;
 cursor:pointer;
 transition:0.3s;
+margin-bottom:15px;
 }
 
 button:hover{
@@ -63,9 +73,9 @@ transform:scale(1.03);
 }
 
 .resultado{
-margin-top:25px;
+margin-top:20px;
 color:white;
-font-size:24px;
+font-size:23px;
 font-weight:bold;
 line-height:40px;
 }
