@@ -21,10 +21,34 @@
 
 <h1>Calcular Frete</h1>
 
+<div class="cidade">
+📍 Várzea Alegre - CE
+</div>
+
+<select id="tipoLocal">
+
+<option value="">
+BAIRRO ou SÍTIO
+</option>
+
+<option value="bairro">
+BAIRRO
+</option>
+
+<option value="sitio">
+SÍTIO
+</option>
+
+</select>
+
 <input
 type="text"
 id="endereco"
-placeholder="Digite seu endereço completo">
+placeholder="Digite a rua/localidade">
+
+<button onclick="usarLocalizacao()">
+Usar Minha Localização
+</button>
 
 <button onclick="calcularFrete()">
 Calcular Frete
