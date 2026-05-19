@@ -21,40 +21,25 @@
 
 <h1>Calcular Frete</h1>
 
-<div class="cidade">
-📍 Várzea Alegre - CE
+<button onclick="usarLocalizacao()">
+📍 Usar Minha Localização Atual
+</button>
+
+<div class="resultado" id="resultado">
+
+Seu frete aparecerá aqui
+
 </div>
 
-<select id="tipoLocal">
-
-<option value="">
-BAIRRO ou SÍTIO
-</option>
-
-<option value="bairro">
-BAIRRO
-</option>
-
-<option value="sitio">
-SÍTIO
-</option>
-
-</select>
-
-<input
-type="text"
-id="endereco"
-placeholder="Digite a rua/localidade">
-
-<button onclick="usarLocalizacao()">
-Usar Minha Localização
-</button>
-
-<button onclick="calcularFrete()">
-Calcular Frete
-</button>
-
-<div class="resultado" id="resultado"></div>
+<a
+id="botaoWhatsapp"
+href="#"
+target="_blank"
+class="botao-whatsapp"
+style="display:none;"
+>
+Enviar Localização no WhatsApp
+</a>
 
 </div>
 
