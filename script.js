@@ -1,15 +1,43 @@
-const enderecoLoja = "Várzea Alegre Ceará";
+const enderecoLoja =
+"Meu Pratinho Várzea Alegre Ceará";
 
-function calcularFrete(){
+function calcularFrete(destinoManual = null){
 
-const destino = document.getElementById("endereco").value;
+let destino;
 
-if(destino === ""){
-alert("Digite seu endereço.");
+if(destinoManual){
+
+destino = destinoManual;
+
+}else{
+
+const endereco =
+document.getElementById("endereco").value;
+
+const tipo =
+document.getElementById("tipoLocal").value;
+
+if(tipo === ""){
+
+alert("Escolha BAIRRO ou SÍTIO");
 return;
+
 }
 
-const service = new google.maps.DistanceMatrixService();
+if(endereco === ""){
+
+alert("Digite o endereço.");
+return;
+
+}
+
+destino =
+`${endereco}, Várzea Alegre Ceará`;
+
+}
+
+const service =
+new google.maps.DistanceMatrixService();
 
 service.getDistanceMatrix(
 {
@@ -23,7 +51,7 @@ function(response,status){
 
 if(status !== "OK"){
 
-alert("Erro ao calcular frete.");
+alert("Erro ao calcular.");
 return;
 
 }
@@ -33,7 +61,7 @@ response.rows[0].elements[0];
 
 if(resultado.status !== "OK"){
 
-alert("Endereço não encontrado.");
+alert("Local não encontrado.");
 return;
 
 }
@@ -48,11 +76,12 @@ distanciaTexto
 .replace(",",".")
 );
 
-const valorFrete = distanciaKm * 5;
+const valorFrete =
+distanciaKm * 5;
 
 document.getElementById("resultado").innerHTML =
 `
-🚗 Distância: ${distanciaKm.toFixed(1)} KM
+🚗 ${distanciaKm.toFixed(1)} KM
 
 <br>
 
@@ -62,5 +91,42 @@ document.getElementById("resultado").innerHTML =
 }
 
 );
+
+}
+
+function usarLocalizacao(){
+
+if(navigator.geolocation){
+
+navigator.geolocation.getCurrentPosition(
+
+function(position){
+
+const latitude =
+position.coords.latitude;
+
+const longitude =
+position.coords.longitude;
+
+const destino =
+`${latitude},${longitude}`;
+
+calcularFrete(destino);
+
+},
+
+function(){
+
+alert("Não foi possível obter localização.");
+
+}
+
+);
+
+}else{
+
+alert("Geolocalização não suportada.");
+
+}
 
 }
