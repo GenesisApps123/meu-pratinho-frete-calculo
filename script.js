@@ -3,11 +3,24 @@ const enderecoLoja =
 
 function usarLocalizacao(){
 
-if(navigator.geolocation){
+const resultado =
+document.getElementById("resultado");
+
+resultado.innerHTML =
+"📍 Obtendo sua localização...";
+
+if(!navigator.geolocation){
+
+resultado.innerHTML =
+"Seu navegador não suporta localização.";
+
+return;
+
+}
 
 navigator.geolocation.getCurrentPosition(
 
-function(position){
+async function(position){
 
 const latitude =
 position.coords.latitude;
@@ -15,60 +28,70 @@ position.coords.latitude;
 const longitude =
 position.coords.longitude;
 
+const destino =
+`${latitude},${longitude}`;
+
 const geocoder =
 new google.maps.Geocoder();
 
-const latlng = {
-lat: latitude,
-lng: longitude
-};
-
 geocoder.geocode(
 {
-location: latlng
+location:{
+lat: latitude,
+lng: longitude
+}
 },
 
 function(results,status){
 
-if(status === "OK"){
+let enderecoCliente =
+"Localização atual";
 
-if(results[0]){
+if(
+status === "OK" &&
+results &&
+results.length > 0
+){
 
-const enderecoCliente =
+enderecoCliente =
 results[0].formatted_address;
 
+}
+
 calcularFrete(
-`${latitude},${longitude}`,
+destino,
 enderecoCliente
 );
 
 }
 
-}
-
-}
-
 );
 
 },
 
-function(){
+function(error){
 
-alert("Não foi possível obter sua localização.");
+resultado.innerHTML =
+"❌ Permita o acesso à localização.";
 
+console.log(error);
+
+},
+
+{
+enableHighAccuracy:true,
+timeout:15000,
+maximumAge:0
 }
 
 );
 
-}else{
-
-alert("Geolocalização não suportada.");
-
 }
 
-}
-
-function calcularFrete(destino,enderecoCliente){
+function calcularFrete(
+destino,
+enderecoCliente
+){
 
 const service =
 new google.maps.DistanceMatrixService();
@@ -77,31 +100,38 @@ service.getDistanceMatrix(
 {
 origins:[enderecoLoja],
 destinations:[destino],
-travelMode:'DRIVING',
-unitSystem: google.maps.UnitSystem.METRIC
+travelMode:"DRIVING",
+unitSystem:
+google.maps.UnitSystem.METRIC
 },
 
 function(response,status){
 
 if(status !== "OK"){
 
-alert("Erro ao calcular frete.");
+document.getElementById("resultado")
+.innerHTML =
+"Erro ao calcular frete.";
+
 return;
 
 }
 
-const resultado =
+const element =
 response.rows[0].elements[0];
 
-if(resultado.status !== "OK"){
+if(element.status !== "OK"){
 
-alert("Não foi possível calcular.");
+document.getElementById("resultado")
+.innerHTML =
+"Não foi possível calcular.";
+
 return;
 
 }
 
 const distanciaTexto =
-resultado.distance.text;
+element.distance.text;
 
 const distanciaKm =
 parseFloat(
@@ -113,28 +143,36 @@ distanciaTexto
 const valorFrete =
 distanciaKm * 5;
 
-document.getElementById("resultado").innerHTML =
+document.getElementById("resultado")
+.innerHTML =
 `
-📍 <strong>Local:</strong><br>
+📍 <strong>Seu Local:</strong>
+
+<br><br>
+
 ${enderecoCliente}
 
 <br><br>
 
-🚗 ${distanciaKm.toFixed(1)} KM
+🚗 Distância:
+${distanciaKm.toFixed(1)} KM
 
 <br><br>
 
-💰 Frete: R$ ${valorFrete.toFixed(2)}
+💰 Frete:
+R$ ${valorFrete.toFixed(2)}
 `;
 
 const mensagem =
-`Olá! Minha localização para entrega é:%0A%0A📍 ${enderecoCliente}%0A%0A🚗 Distância: ${distanciaKm.toFixed(1)} KM%0A💰 Frete: R$ ${valorFrete.toFixed(2)}`;
+`Olá! Quero pedir no Meu Pratinho.%0A%0A📍 Local:%0A${enderecoCliente}%0A%0A🚗 Distância: ${distanciaKm.toFixed(1)} KM%0A💰 Frete: R$ ${valorFrete.toFixed(2)}`;
 
 const linkWhatsapp =
 `https://wa.me/5588996444527?text=${mensagem}`;
 
 const botaoWhatsapp =
-document.getElementById("botaoWhatsapp");
+document.getElementById(
+"botaoWhatsapp"
+);
 
 botaoWhatsapp.href =
 linkWhatsapp;
