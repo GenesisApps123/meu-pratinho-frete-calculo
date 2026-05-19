@@ -1,40 +1,74 @@
 const enderecoLoja =
 "Meu Pratinho Várzea Alegre Ceará";
 
-function calcularFrete(destinoManual = null){
+function usarLocalizacao(){
 
-let destino;
+if(navigator.geolocation){
 
-if(destinoManual){
+navigator.geolocation.getCurrentPosition(
 
-destino = destinoManual;
+function(position){
+
+const latitude =
+position.coords.latitude;
+
+const longitude =
+position.coords.longitude;
+
+const geocoder =
+new google.maps.Geocoder();
+
+const latlng = {
+lat: latitude,
+lng: longitude
+};
+
+geocoder.geocode(
+{
+location: latlng
+},
+
+function(results,status){
+
+if(status === "OK"){
+
+if(results[0]){
+
+const enderecoCliente =
+results[0].formatted_address;
+
+calcularFrete(
+`${latitude},${longitude}`,
+enderecoCliente
+);
+
+}
+
+}
+
+}
+
+);
+
+},
+
+function(){
+
+alert("Não foi possível obter sua localização.");
+
+}
+
+);
 
 }else{
 
-const endereco =
-document.getElementById("endereco").value;
-
-const tipo =
-document.getElementById("tipoLocal").value;
-
-if(tipo === ""){
-
-alert("Escolha BAIRRO ou SÍTIO");
-return;
+alert("Geolocalização não suportada.");
 
 }
 
-if(endereco === ""){
-
-alert("Digite o endereço.");
-return;
-
 }
 
-destino =
-`${endereco}, Várzea Alegre Ceará`;
-
-}
+function calcularFrete(destino,enderecoCliente){
 
 const service =
 new google.maps.DistanceMatrixService();
@@ -51,7 +85,7 @@ function(response,status){
 
 if(status !== "OK"){
 
-alert("Erro ao calcular.");
+alert("Erro ao calcular frete.");
 return;
 
 }
@@ -61,7 +95,7 @@ response.rows[0].elements[0];
 
 if(resultado.status !== "OK"){
 
-alert("Local não encontrado.");
+alert("Não foi possível calcular.");
 return;
 
 }
@@ -81,52 +115,35 @@ distanciaKm * 5;
 
 document.getElementById("resultado").innerHTML =
 `
+📍 <strong>Local:</strong><br>
+${enderecoCliente}
+
+<br><br>
+
 🚗 ${distanciaKm.toFixed(1)} KM
 
-<br>
+<br><br>
 
 💰 Frete: R$ ${valorFrete.toFixed(2)}
 `;
 
-}
+const mensagem =
+`Olá! Minha localização para entrega é:%0A%0A📍 ${enderecoCliente}%0A%0A🚗 Distância: ${distanciaKm.toFixed(1)} KM%0A💰 Frete: R$ ${valorFrete.toFixed(2)}`;
 
-);
+const linkWhatsapp =
+`https://wa.me/5588996444527?text=${mensagem}`;
 
-}
+const botaoWhatsapp =
+document.getElementById("botaoWhatsapp");
 
-function usarLocalizacao(){
+botaoWhatsapp.href =
+linkWhatsapp;
 
-if(navigator.geolocation){
-
-navigator.geolocation.getCurrentPosition(
-
-function(position){
-
-const latitude =
-position.coords.latitude;
-
-const longitude =
-position.coords.longitude;
-
-const destino =
-`${latitude},${longitude}`;
-
-calcularFrete(destino);
-
-},
-
-function(){
-
-alert("Não foi possível obter localização.");
+botaoWhatsapp.style.display =
+"block";
 
 }
 
 );
-
-}else{
-
-alert("Geolocalização não suportada.");
-
-}
 
 }
