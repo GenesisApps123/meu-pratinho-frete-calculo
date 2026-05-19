@@ -4,6 +4,11 @@ function calcularFrete(){
 
 const destino = document.getElementById("endereco").value;
 
+if(destino === ""){
+alert("Digite seu endereço.");
+return;
+}
+
 const service = new google.maps.DistanceMatrixService();
 
 service.getDistanceMatrix(
@@ -18,24 +23,40 @@ function(response,status){
 
 if(status !== "OK"){
 
-alert("Erro ao calcular.");
+alert("Erro ao calcular frete.");
+return;
+
+}
+
+const resultado =
+response.rows[0].elements[0];
+
+if(resultado.status !== "OK"){
+
+alert("Endereço não encontrado.");
 return;
 
 }
 
 const distanciaTexto =
-response.rows[0].elements[0].distance.text;
+resultado.distance.text;
 
 const distanciaKm =
-parseFloat(distanciaTexto.replace(" km","").replace(",","."));
+parseFloat(
+distanciaTexto
+.replace(" km","")
+.replace(",",".")
+);
 
 const valorFrete = distanciaKm * 5;
 
 document.getElementById("resultado").innerHTML =
 `
-Distância: ${distanciaKm.toFixed(1)} KM
-<br><br>
-Frete: R$ ${valorFrete.toFixed(2)}
+🚗 Distância: ${distanciaKm.toFixed(1)} KM
+
+<br>
+
+💰 Frete: R$ ${valorFrete.toFixed(2)}
 `;
 
 }
